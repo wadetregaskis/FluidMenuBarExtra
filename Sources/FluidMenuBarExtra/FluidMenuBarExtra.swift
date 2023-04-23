@@ -36,24 +36,66 @@ import SwiftUI
 public final class FluidMenuBarExtra {
     private let statusItem: FluidMenuBarExtraStatusItem
 
-    public init(title: String, animation: NSWindow.AnimationBehavior = .none, menu: NSMenu? = nil, alignRight: Bool = false, @ViewBuilder content: @escaping () -> some View) {
-        let window = FluidMenuBarExtraWindow(title: title, animation: animation, content: content)
-        statusItem = FluidMenuBarExtraStatusItem(title: title, window: window, menu: menu, alignRight: alignRight)
+    public init(_ title: String,
+                animation: NSWindow.AnimationBehavior = .none,
+                menu: NSMenu? = nil,
+                alignRight: Bool = false,
+                @ViewBuilder content: @escaping () -> some View) {
+        let window = FluidMenuBarExtraWindow(title: title,
+                                             animation: animation,
+                                             content: content)
+        statusItem = FluidMenuBarExtraStatusItem(title: title,
+                                                 window: window,
+                                                 menu: menu,
+                                                 alignRight: alignRight)
     }
 
-    public init(title: String, image: String, animation: NSWindow.AnimationBehavior = .none, menu: NSMenu? = nil, alignRight: Bool = false, @ViewBuilder content: @escaping () -> some View) {
-        let window = FluidMenuBarExtraWindow(title: title, animation: animation, content: content)
-        statusItem = FluidMenuBarExtraStatusItem(title: title, image: image, window: window, menu: menu, alignRight: alignRight)
+    public init(_ title: String,
+                image: String,
+                animation: NSWindow.AnimationBehavior = .none,
+                menu: NSMenu? = nil,
+                alignRight: Bool = false,
+                @ViewBuilder content: @escaping () -> some View) {
+        let window = FluidMenuBarExtraWindow(title: title,
+                                             animation: animation,
+                                             content: content)
+        statusItem = FluidMenuBarExtraStatusItem(title: title,
+                                                 image: image,
+                                                 window: window,
+                                                 menu: menu,
+                                                 alignRight: alignRight)
     }
     
-    public init(title: String, image: NSImage, animation: NSWindow.AnimationBehavior = .none, menu: NSMenu? = nil, alignRight: Bool = false, @ViewBuilder content: @escaping () -> some View) {
-        let window = FluidMenuBarExtraWindow(title: title, animation: animation, content: content)
-        statusItem = FluidMenuBarExtraStatusItem(title: title, image: image, window: window, menu: menu, alignRight: alignRight)
+    public init(_ title: String,
+                image: NSImage,
+                animation: NSWindow.AnimationBehavior = .none,
+                menu: NSMenu? = nil,
+                alignRight: Bool = false,
+                @ViewBuilder content: @escaping () -> some View) {
+        let window = FluidMenuBarExtraWindow(title: title,
+                                             animation: animation,
+                                             content: content)
+        statusItem = FluidMenuBarExtraStatusItem(title: title,
+                                                 image: image,
+                                                 window: window,
+                                                 menu: menu,
+                                                 alignRight: alignRight)
     }
 
-    public init(title: String, systemImage: String, animation: NSWindow.AnimationBehavior = .none, menu: NSMenu? = nil, alignRight: Bool = false, @ViewBuilder content: @escaping () -> some View) {
-        let window = FluidMenuBarExtraWindow(title: title, animation: animation, content: content)
-        statusItem = FluidMenuBarExtraStatusItem(title: title, systemImage: systemImage, window: window, menu: menu, alignRight: alignRight)
+    public init(_ title: String,
+                systemImage: String,
+                animation: NSWindow.AnimationBehavior = .none,
+                menu: NSMenu? = nil,
+                alignRight: Bool = false,
+                @ViewBuilder content: @escaping () -> some View) {
+        let window = FluidMenuBarExtraWindow(title: title,
+                                             animation: animation,
+                                             content: content)
+        statusItem = FluidMenuBarExtraStatusItem(title: title,
+                                                 systemImage: systemImage,
+                                                 window: window,
+                                                 menu: menu,
+                                                 alignRight: alignRight)
     }
     
     public func showWindow() {
