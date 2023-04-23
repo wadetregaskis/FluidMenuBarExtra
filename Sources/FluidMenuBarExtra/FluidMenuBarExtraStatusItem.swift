@@ -20,7 +20,9 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
     
     private var shouldAlignRight = false
 
-    private init(window: NSWindow, menu: NSMenu? = nil, alignRight: Bool = false) {
+    private init(window: NSWindow,
+                 menu: NSMenu? = nil,
+                 alignRight: Bool = false) {
         self.window = window
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
