@@ -163,12 +163,29 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
 }
 
 extension FluidMenuBarExtraStatusItem {
-    convenience init(title: String, image: String, window: NSWindow, menu: NSMenu? = nil, alignRight: Bool = false) {
-        self.init(title: title, image: NSImage(named: image), window: window, menu: menu, alignRight: alignRight)
+    convenience init(title: String,
+                     image: String,
+                     window: NSWindow,
+                     menu: NSMenu? = nil,
+                     alignRight: Bool = false) {
+        self.init(title: title,
+                  image: NSImage(named: image),
+                  window: window,
+                  menu: menu,
+                  alignRight: alignRight)
     }
 
-    convenience init(title: String, systemImage: String, window: NSWindow, menu: NSMenu? = nil, alignRight: Bool = false) {
-        self.init(title: title, image: NSImage(systemSymbolName: systemImage, accessibilityDescription: title), window: window, menu: menu, alignRight: alignRight)
+    convenience init(title: String,
+                     systemImage: String,
+                     window: NSWindow,
+                     menu: NSMenu? = nil,
+                     alignRight: Bool = false) {
+        self.init(title: title,
+                  image: NSImage(systemSymbolName: systemImage,
+                                 accessibilityDescription: title),
+                  window: window,
+                  menu: menu,
+                  alignRight: alignRight)
     }
 }
 
