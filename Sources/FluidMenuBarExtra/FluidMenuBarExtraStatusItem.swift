@@ -20,13 +20,22 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
     
     private var shouldAlignRight = false
 
-    private init(window: NSWindow,
-                 menu: NSMenu? = nil,
-                 alignRight: Bool = false) {
+    public init(title: String,
+                image: NSImage? = nil,
+                window: NSWindow,
+                menu: NSMenu? = nil,
+                alignRight: Bool = false) {
         self.window = window
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem.isVisible = true
+        statusItem.button?.setAccessibilityTitle(title)
+
+        if let image {
+            statusItem.button?.image = image
+        } else {
+            statusItem.button?.title = title
+        }
 
         self.shouldAlignRight = alignRight
         
@@ -154,32 +163,12 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
 }
 
 extension FluidMenuBarExtraStatusItem {
-    convenience init(title: String, window: NSWindow, menu: NSMenu? = nil, alignRight: Bool = false) {
-        self.init(window: window, menu: menu, alignRight: alignRight)
-
-        statusItem.button?.title = title
-        statusItem.button?.setAccessibilityTitle(title)
-    }
-
     convenience init(title: String, image: String, window: NSWindow, menu: NSMenu? = nil, alignRight: Bool = false) {
-        self.init(window: window, menu: menu, alignRight: alignRight)
-
-        statusItem.button?.setAccessibilityTitle(title)
-        statusItem.button?.image = NSImage(named: image)
-    }
-    
-    convenience init(title: String, image: NSImage, window: NSWindow, menu: NSMenu? = nil, alignRight: Bool = false) {
-        self.init(window: window, menu: menu, alignRight: alignRight)
-        
-        statusItem.button?.setAccessibilityTitle(title)
-        statusItem.button?.image = image
+        self.init(title: title, image: NSImage(named: image), window: window, menu: menu, alignRight: alignRight)
     }
 
     convenience init(title: String, systemImage: String, window: NSWindow, menu: NSMenu? = nil, alignRight: Bool = false) {
-        self.init(window: window, menu: menu, alignRight: alignRight)
-
-        statusItem.button?.setAccessibilityTitle(title)
-        statusItem.button?.image = NSImage(systemSymbolName: systemImage, accessibilityDescription: title)
+        self.init(title: title, image: NSImage(systemSymbolName: systemImage, accessibilityDescription: title), window: window, menu: menu, alignRight: alignRight)
     }
 }
 
