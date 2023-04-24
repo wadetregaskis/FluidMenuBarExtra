@@ -64,12 +64,12 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     ///   - alignRight: Applies only when the natural location of the pop-up window isn't viable because it would push the window past the rightmost edge of the screen.  The default behaviour (when this parameter is false) is to flip the pop-up window alignment from left edge to right edge (as is the standard behaviour for menus).  If this parameter is true, the window is instead shown as far right as possible (i.e. up against the rightmost edge of the screen).
     ///   - content: The contents of the pop-up window that is shown when the user clicks on the menubar item.
     private init(_ title: String,
-                image: FluidMenuBarExtraStatusItem.Image,
-                isInserted foo: Binding<Bool> = .constant(true),
-                animation: NSWindow.AnimationBehavior = .none,
-                menu: NSMenu? = nil,
-                alignRight: Bool = false,
-                @ViewBuilder content: @escaping () -> Content) {
+                 image: FluidMenuBarExtraStatusItem.Image,
+                 isInserted foo: Binding<Bool> = .constant(true),
+                 animation: NSWindow.AnimationBehavior = .none,
+                 menu: NSMenu? = nil,
+                 alignRight: Bool = false,
+                 @ViewBuilder content: @escaping () -> Content) {
         self._isInserted = foo
 
         self.title = title
