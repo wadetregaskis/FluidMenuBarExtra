@@ -85,14 +85,16 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
                let button = self.statusItem.button,
                event.window == button.window
             {
-                switch event.type {
-                case .leftMouseDown:
+                switch (event.type, self.menu) {
+                case (.leftMouseDown, _):
+                    fallthrough
+                case (_, nil):
                     if !event.modifierFlags.contains(.command) {
                         self.didPressStatusBarButton(button)
                         return nil
                     }
-                case .rightMouseDown:
-                    self.menu?.popUp(positioning: nil, at: CGPoint(x: 0, y: button.bounds.maxY + 5), in: button)
+                case (.rightMouseDown, let menu?):
+                    menu.popUp(positioning: nil, at: CGPoint(x: 0, y: button.bounds.maxY + 5), in: button)
                     return nil
                 default:
                     break
