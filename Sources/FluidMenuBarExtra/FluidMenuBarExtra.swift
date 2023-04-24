@@ -144,7 +144,7 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
                                                            alignRight: alignRight)
         }
 
-        return Settings {}
+        return Settings {}.onChange(of: isInserted) { state.statusItem?.isVisible = $0 }
     }
 }
 
