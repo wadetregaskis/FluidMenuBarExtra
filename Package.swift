@@ -10,10 +10,6 @@ let package = Package(
         .library(
             name: "FluidMenuBarExtra",
             targets: ["FluidMenuBarExtra"]
-        ),
-        .executable(
-            name: "Demo",
-            targets: ["Demo"]
         )
     ],
     dependencies: [
@@ -24,10 +20,6 @@ let package = Package(
         .target(
             name: "FluidMenuBarExtra",
             dependencies: []
-        ),
-        .executableTarget(
-            name: "Demo",
-            dependencies: ["FluidMenuBarExtra"]
         )
     ]
 )
