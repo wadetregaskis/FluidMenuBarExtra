@@ -12,7 +12,7 @@ import SwiftUI
 /// An individual element displayed in the system menu bar that displays a window
 /// when triggered.
 final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
-    private let window: NSWindow
+    let window: NSWindow
     @objc private let statusItem: NSStatusItem
     private var statusItemVisibilityObservation: NSKeyValueObservation? = nil
 
