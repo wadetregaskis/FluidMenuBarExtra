@@ -12,7 +12,7 @@ import SwiftUI
 /// An individual element displayed in the system menu bar that displays a window
 /// when triggered.
 final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
-    private let window: NSWindow
+    let window: NSWindow
     @objc private let statusItem: NSStatusItem
     private var statusItemVisibilityObservation: NSKeyValueObservation? = nil
 
@@ -113,7 +113,10 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
     }
 
     private func didPressStatusBarButton(_ sender: NSStatusBarButton) {
+        print("didPressStatusBarButton\n\twindow.isVisible = \(window.isVisible)\n\twindow.frame = \(window.frame)")
+
         if window.isVisible {
+            print("Hiding window.")
             dismissWindow()
             return
         }
@@ -173,12 +176,17 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
         statusItem.button?.highlight(highlight)
     }
 
-    private func setWindowPosition() {
+    func setWindowPosition() {
+        print("setWindowPosition()\n\tCurrent frame: \(window.frame)")
+
         guard let statusItemWindow = statusItem.button?.window else {
             // If we don't know where the status item is, just place the window in the center.
+            print("Dunno where the status item is.")
             window.center()
             return
         }
+
+        print("\tStatus item frame: \(statusItemWindow.frame)")
 
         var targetRect = statusItemWindow.frame
 
@@ -205,6 +213,9 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
             targetRect.origin.x -= Metrics.windowBorderSize
         }
 
+        targetRect.origin.y -= 50
+
+        print("\tSetting window top-left to \(targetRect.origin)…")
         window.setFrameTopLeftPoint(targetRect.origin)
     }
 }
