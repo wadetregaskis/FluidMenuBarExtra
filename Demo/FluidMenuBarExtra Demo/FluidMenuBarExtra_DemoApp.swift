@@ -22,7 +22,9 @@ private struct FluidMenuBarExtra_DemoApp: App {
             }.fixedSize()
         }.windowResizability(.contentSize)
 
-        FluidMenuBarExtra("Demo", systemImage: "chevron.down.circle", isInserted: $showMenuBarExtra) {
+        FluidMenuBarExtra("Demo",
+                          systemImage: "chevron.down.circle",
+                          isInserted: $showMenuBarExtra) {
             /// IMPORTANT:  If you have dynamic content (as this example does, with bindings to state variables) you must define your view in a separate struct, not inline right here.  Otherwise any updates to your state variables won't be reflected in your views.  This appears to be a SwiftUI bug (or bizarre limitation).
             DemoView(showMenuBarExtra: $showMenuBarExtra,
                      extraButtons: $extraButtons)
