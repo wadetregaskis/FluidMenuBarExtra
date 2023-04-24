@@ -219,7 +219,9 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     }
 
     public var body: some Scene {
-        if nil == state.statusItem {
+        if let statusItem = state.statusItem {
+            statusItem.alignRight = alignRight
+        } else {
             state.statusItem = FluidMenuBarExtraStatusItem(title: title,
                                                            image: image,
                                                            isInserted: $isInserted,

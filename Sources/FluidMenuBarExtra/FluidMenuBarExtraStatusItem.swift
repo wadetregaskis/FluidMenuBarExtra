@@ -19,7 +19,11 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
     private var localEventMonitor: EventMonitor?
     private var globalEventMonitor: EventMonitor?
     
-    private var shouldAlignRight = false
+    var alignRight = false {
+        didSet {
+            setWindowPosition(animate: true)
+        }
+    }
 
     @Binding private var isInserted: Bool
 
@@ -64,7 +68,7 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
             statusItem.button?.title = title
         }
 
-        self.shouldAlignRight = alignRight
+        self.alignRight = alignRight
         
         super.init()
 
@@ -173,39 +177,34 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
         statusItem.button?.highlight(highlight)
     }
 
-    private func setWindowPosition() {
+    private func setWindowPosition(animate: Bool = false) {
         guard let statusItemWindow = statusItem.button?.window else {
             // If we don't know where the status item is, just place the window in the center.
             window.center()
             return
         }
 
-        var targetRect = statusItemWindow.frame
+        var newFrame = CGRect(origin: statusItemWindow.frame.origin, size: window.frame.size)
 
-        if let screen = statusItemWindow.screen {
-            let windowWidth = window.frame.width
+        newFrame.origin.y -= newFrame.height
 
-            if statusItemWindow.frame.origin.x + windowWidth > screen.visibleFrame.width {
-                if shouldAlignRight {
-                    targetRect.origin.x = screen.visibleFrame.origin.x + screen.visibleFrame.width - windowWidth - Metrics.windowBorderSize
-                } else {
-                    targetRect.origin.x += statusItemWindow.frame.width
-                    targetRect.origin.x -= windowWidth
-                    
-                    // Offset by window border size to align with highlighted button.
-                    targetRect.origin.x += Metrics.windowBorderSize
-                }
-
+        // Note: Offset by window border size to align with highlighted button.
+        if let screen = statusItemWindow.screen,
+           newFrame.maxX > screen.visibleFrame.width {
+            if alignRight {
+                newFrame.origin.x = screen.visibleFrame.maxX - newFrame.width - Metrics.windowBorderSize
             } else {
-                // Offset by window border size to align with highlighted button.
-                targetRect.origin.x -= Metrics.windowBorderSize
+                newFrame.origin.x += statusItemWindow.frame.width - newFrame.width + Metrics.windowBorderSize
             }
         } else {
-            // If there's no screen, assume default positioning.
-            targetRect.origin.x -= Metrics.windowBorderSize
+            newFrame.origin.x -= Metrics.windowBorderSize
         }
 
-        window.setFrameTopLeftPoint(targetRect.origin)
+        guard newFrame != window.frame else {
+            return
+        }
+
+        window.setFrame(newFrame, display: true, animate: animate)
     }
 }
 
