@@ -21,9 +21,9 @@
 
 ## About
 
-SwiftUI's built in [`MenuBarExtra`](https://developer.apple.com/documentation/swiftui/menubarextra) API makes it easy to create menu bar applications in pure SwiftUI. However, the current implementation of the [`WindowMenuBarExtraStyle`](https://developer.apple.com/documentation/swiftui/windowmenubarextrastyle) is limited in that it doesn't fade out when dismissed like traditional menu items, doesn't persist selection state when the menu is opened, and uses a less-than-ideal resizing mechanism that leaves your app feeling unpolished.
+SwiftUI's built in [`MenuBarExtra`](https://developer.apple.com/documentation/swiftui/menubarextra) API makes it easy to create menu bar applications in pure SwiftUI.  However, as of macOS 13 its functionality is extremely limited.  Worse, it doesn't behave correctly (e.g. it doesn't animate, it doesn't close the pop-up when the user interacts with other menu items, etc).
 
-FluidMenuBarExtra is a lightweight package that provides a convenient API for creating seamless menu bar extras with SwiftUI in both AppKit and SwiftUI apps. Once MenuBarExtra is improved in future versions of macOS, switching back to MenuBarExtra is as simple as moving a few lines of SwiftUI code back to your `App`.
+FluidMenuBarExtra provides a drop-in replacement to correct these issues.
 
 ### Key Features
 
@@ -35,48 +35,30 @@ FluidMenuBarExtra is a lightweight package that provides a convenient API for cr
 
 ## Usage
 
-To use FluidMenuBarExtra, initialize a `FluidMenuBarExtra` once during your app's lifecycle. Multiple instances of `FluidMenuBarExtra` can exist if you need more than one menu bar extra.
-
-First, define an application delegate. Don't worry, your app's entry point will still be based in SwiftUI.
-
-```swift
-class AppDelegate: NSObject, NSApplicationDelegate {
-    private var menuBarExtra: FluidMenuBarExtra?
-
-    func applicationDidFinishLaunching(_ notification: Notification) {
-        self.menuBarExtra = FluidMenuBarExtra(title: "My Menu", systemImage: "cloud.fill") {
-            Text("My SwiftUI View")
-        }
-    }
-}
-```
-
-Then, use the `@NSApplicationDelegateAdaptor` property wrapper to attach the delegate to your SwiftUI application:
+Use FluidMenuBarExtra like you would Apple's MenuBarExtra, e.g.:
 
 ```swift
 import SwiftUI
+import FluidMenuBarExtra
 
 @main
-struct MyApplication: App {
-    @NSApplicationDelegateAdaptor private var appDelegate: AppDelegate
+private struct DemoApp: App {
+    @AppStorage("showMenuBarExtra") var showMenuBarExtra = true
 
     var body: some Scene {
-        Settings {
-            SettingsTabs()
+        FluidMenuBarExtra("Demo", systemImage: "chevron.down.circle", isInserted: $showMenuBarExtra) {
+            Text("Hello, world!")
+                .padding(20)
         }
     }
 }
+
 ```
 
-That's it! The menu bar extra will be installed as long as the reference to the `FluidMenuBarExtra` exists. When the reference is deleted or set to `nil`, the item will be removed from the menu bar.
-
-> 💡 **Tip:** If any stateful properties or utilities need to be shared between your menu bar extra and other windows, you can move those properties to your `AppDelegate`. To allow SwiftUI views to consume published properties, conform the delegate class to `ObservableObject`. SwiftUI will then automatically insert the delegate into the environment. [Learn more](https://developer.apple.com/documentation/swiftui/uiapplicationdelegateadaptor).
+See also the included demo application for a more elaborate example.
 
 ## Caveats
 
-- SwiftUI applications require at least one `Scene` be valid. Because FluidMenuBarExtra is not created in a scene, you'll need at least one other scene in the body of your `App`:
-   - A common trick is to use a `Settings` scene with an `EmptyView()` inside.
-   - Alternatively, you can try using the undocumented yet still public `_EmptyScene()`, but no guarantees that App Review will like it.
 - Since FluidMenuBarExtra uses an `NSWindow`, not an `NSMenu`, you'll find that the window presented by FluidMenuBarExtra has a slighter wider corner radius than other menus.
 
 ## Contributions
