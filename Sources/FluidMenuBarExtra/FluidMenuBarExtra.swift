@@ -133,19 +133,7 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     }
 
     public var body: some Scene {
-        print("Re-evaluating FluidMenuBarExtra body.")
-
-        if let statusItem = state.statusItem {
-            print("Trying to force an update…")
-
-            statusItem.window.tryToPerform("doUpdate", with: nil)
-            //statusItem.window.setFrame(NSRect(x: 1000, y: 1300, width: 300, height: 400), display: true)// frame.size = CGSize(width: 300, height: 300)
-            //statusItem.window.makeKeyAndOrderFront(self)
-            //statusItem.window.contentView?.needsLayout = true
-            //statusItem.window.contentView?.needsUpdateConstraints = true
-            //statusItem.window.contentView?.needsDisplay = true
-            //statusItem.setWindowPosition()
-        } else {
+        if nil == state.statusItem {
             state.statusItem = FluidMenuBarExtraStatusItem(title: title,
                                                            image: image,
                                                            isInserted: $isInserted,
