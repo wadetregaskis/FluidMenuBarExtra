@@ -14,11 +14,14 @@ import SwiftUI
 final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
     private let window: NSWindow
     @objc private let statusItem: NSStatusItem
+    private var statusItemVisibilityObservation: NSKeyValueObservation? = nil
 
     private var localEventMonitor: EventMonitor?
     private var globalEventMonitor: EventMonitor?
     
     private var shouldAlignRight = false
+
+    @Binding private var isInserted: Bool
 
     enum Image {
         case named(String)
@@ -43,14 +46,16 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
 
     init(title: String,
          image: Image = .none,
+         isInserted foo: Binding<Bool> = .constant(true),
          window: NSWindow,
          menu: NSMenu? = nil,
          alignRight: Bool = false) {
+        self._isInserted = foo
         self.window = window
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        statusItem.isVisible = true
         statusItem.behavior = .removalAllowed
+        statusItem.isVisible = foo.wrappedValue
         statusItem.button?.setAccessibilityTitle(title)
 
         if let image = image.asNSImage(accessibilityDescription: title) {
@@ -62,6 +67,12 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
         self.shouldAlignRight = alignRight
         
         super.init()
+
+        statusItemVisibilityObservation = observe(\.statusItem.isVisible, options: .new) {
+            [weak self] _, change in
+            guard let newValue = change.newValue else { return }
+            self?.isInserted = newValue
+        }
 
         localEventMonitor = LocalEventMonitor(mask: [.leftMouseDown, .rightMouseDown]) { [weak self] event in
             if let button = self?.statusItem.button,
@@ -97,6 +108,7 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
     }
 
     deinit {
+        statusItemVisibilityObservation?.invalidate()
         NSStatusBar.system.removeStatusItem(statusItem)
     }
 
@@ -111,6 +123,15 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
         // Tells the system to persist the menu bar in full screen mode.
         DistributedNotificationCenter.default().post(name: .beginMenuTracking, object: nil)
         window.makeKeyAndOrderFront(nil)
+    }
+
+    var isVisible: Bool {
+        get {
+            statusItem.isVisible
+        }
+        set {
+            statusItem.isVisible = newValue
+        }
     }
 
     func windowDidBecomeKey(_ notification: Notification) {

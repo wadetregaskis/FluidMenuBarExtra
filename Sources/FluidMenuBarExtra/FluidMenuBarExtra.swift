@@ -35,6 +35,7 @@ import SwiftUI
 /// modifier.
 public struct FluidMenuBarExtra<Content: View>: Scene {
     @StateObject private var state = FluidMenuBarExtraStatusItemWrapper<Content>()
+    @Binding private var isInserted: Bool
 
     private let title: String
     private let image: FluidMenuBarExtraStatusItem.Image
@@ -45,10 +46,13 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
 
     private init(_ title: String,
                 image: FluidMenuBarExtraStatusItem.Image,
+                isInserted foo: Binding<Bool> = .constant(true),
                 animation: NSWindow.AnimationBehavior = .none,
                 menu: NSMenu? = nil,
                 alignRight: Bool = false,
                 @ViewBuilder content: @escaping () -> Content) {
+        self._isInserted = foo
+
         self.title = title
         self.image = image
         self.animation = animation
@@ -58,12 +62,14 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     }
 
     public init(_ title: String,
+                isInserted: Binding<Bool> = .constant(true),
                 animation: NSWindow.AnimationBehavior = .none,
                 menu: NSMenu? = nil,
                 alignRight: Bool = false,
                 @ViewBuilder content: @escaping () -> Content) {
         self.init(title,
                   image: .none,
+                  isInserted: isInserted,
                   animation: animation,
                   menu: menu,
                   alignRight: alignRight,
@@ -72,12 +78,14 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
 
     public init(_ title: String,
                 image: String,
+                isInserted: Binding<Bool> = .constant(true),
                 animation: NSWindow.AnimationBehavior = .none,
                 menu: NSMenu? = nil,
                 alignRight: Bool = false,
                 @ViewBuilder content: @escaping () -> Content) {
         self.init(title,
                   image: .named(image),
+                  isInserted: isInserted,
                   animation: animation,
                   menu: menu,
                   alignRight: alignRight,
@@ -86,12 +94,14 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     
     public init(_ title: String,
                 image: NSImage,
+                isInserted: Binding<Bool> = .constant(true),
                 animation: NSWindow.AnimationBehavior = .none,
                 menu: NSMenu? = nil,
                 alignRight: Bool = false,
                 @ViewBuilder content: @escaping () -> Content) {
         self.init(title,
                   image: .direct(image),
+                  isInserted: isInserted,
                   animation: animation,
                   menu: menu,
                   alignRight: alignRight,
@@ -100,12 +110,14 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
 
     public init(_ title: String,
                 systemImage: String,
+                isInserted: Binding<Bool> = .constant(true),
                 animation: NSWindow.AnimationBehavior = .none,
                 menu: NSMenu? = nil,
                 alignRight: Bool = false,
                 @ViewBuilder content: @escaping () -> Content) {
         self.init(title,
                   image: .systemNamed(systemImage),
+                  isInserted: isInserted,
                   animation: animation,
                   menu: menu,
                   alignRight: alignRight,
@@ -124,6 +136,7 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
         if nil == state.statusItem {
             state.statusItem = FluidMenuBarExtraStatusItem(title: title,
                                                            image: image,
+                                                           isInserted: $isInserted,
                                                            window: FluidMenuBarExtraWindow(title: title,
                                                                                            animation: animation,
                                                                                            content: content),
