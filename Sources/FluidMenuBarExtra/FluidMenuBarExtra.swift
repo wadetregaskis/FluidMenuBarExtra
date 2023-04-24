@@ -33,7 +33,11 @@ import SwiftUI
 ///
 /// See also the bundled demo application for a more detailed example.
 public struct FluidMenuBarExtra<Content: View>: Scene {
-    @StateObject private var state = FluidMenuBarExtraStatusItemWrapper<Content>()
+    private class State<Content: View>: ObservableObject {
+        var statusItem: FluidMenuBarExtraStatusItem? = nil
+    }
+
+    @StateObject private var state = State<Content>()
     @Binding private var isInserted: Bool
 
     private let title: String
@@ -228,9 +232,4 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
 
         return Settings {}.onChange(of: isInserted) { state.statusItem?.isVisible = $0 }
     }
-}
-
-
-fileprivate class FluidMenuBarExtraStatusItemWrapper<Content: View>: ObservableObject {
-    var statusItem: FluidMenuBarExtraStatusItem? = nil
 }
