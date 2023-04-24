@@ -13,18 +13,39 @@ import SwiftUI
 /// when triggered.
 final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
     private let window: NSWindow
-    private let statusItem: NSStatusItem
+    @objc private let statusItem: NSStatusItem
 
     private var localEventMonitor: EventMonitor?
     private var globalEventMonitor: EventMonitor?
     
     private var shouldAlignRight = false
 
-    public init(title: String,
-                image: NSImage? = nil,
-                window: NSWindow,
-                menu: NSMenu? = nil,
-                alignRight: Bool = false) {
+    enum Image {
+        case named(String)
+        case systemNamed(String)
+        case direct(NSImage)
+        case none
+
+        func asNSImage(accessibilityDescription: String) -> NSImage? {
+            switch self {
+            case .named(let name):
+                return NSImage(named: name)
+            case .systemNamed(let name):
+                return NSImage(systemSymbolName: name,
+                               accessibilityDescription: accessibilityDescription)
+            case .direct(let image):
+                return image
+            case .none:
+                return nil
+            }
+        }
+    }
+
+    init(title: String,
+         image: Image = .none,
+         window: NSWindow,
+         menu: NSMenu? = nil,
+         alignRight: Bool = false) {
         self.window = window
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
@@ -32,7 +53,7 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
         statusItem.behavior = .removalAllowed
         statusItem.button?.setAccessibilityTitle(title)
 
-        if let image {
+        if let image = image.asNSImage(accessibilityDescription: title) {
             statusItem.button?.image = image
         } else {
             statusItem.button?.title = title
@@ -164,33 +185,6 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
         }
 
         window.setFrameTopLeftPoint(targetRect.origin)
-    }
-}
-
-extension FluidMenuBarExtraStatusItem {
-    convenience init(title: String,
-                     image: String,
-                     window: NSWindow,
-                     menu: NSMenu? = nil,
-                     alignRight: Bool = false) {
-        self.init(title: title,
-                  image: NSImage(named: image),
-                  window: window,
-                  menu: menu,
-                  alignRight: alignRight)
-    }
-
-    convenience init(title: String,
-                     systemImage: String,
-                     window: NSWindow,
-                     menu: NSMenu? = nil,
-                     alignRight: Bool = false) {
-        self.init(title: title,
-                  image: NSImage(systemSymbolName: systemImage,
-                                 accessibilityDescription: title),
-                  window: window,
-                  menu: menu,
-                  alignRight: alignRight)
     }
 }
 
