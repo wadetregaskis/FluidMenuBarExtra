@@ -6,7 +6,6 @@
 //  Copyright © 2023 Wade Tregaskis.
 //
 
-import AppKit
 import SwiftUI
 import FluidMenuBarExtra
 
