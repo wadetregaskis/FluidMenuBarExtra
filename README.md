@@ -52,7 +52,6 @@ private struct DemoApp: App {
         }
     }
 }
-
 ```
 
 See also the included demo application for a more elaborate example.
