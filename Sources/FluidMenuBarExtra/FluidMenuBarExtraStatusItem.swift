@@ -19,8 +19,9 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
 
     private var localEventMonitor: EventMonitor?
     private var globalEventMonitor: EventMonitor?
-    
-    var alignRight = false {
+
+    var alignment: PopUpAlignment
+    var screenClippingBehaviour: ScreenClippingBehaviour {
         didSet {
             setWindowPosition(animate: true)
         }
@@ -54,7 +55,8 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
          isInserted foo: Binding<Bool> = .constant(true),
          window: NSWindow,
          menu: NSMenu? = nil,
-         alignRight: Bool = false) {
+         alignment: PopUpAlignment = .left,
+         screenClippingBehaviour: ScreenClippingBehaviour = .reverseAlignment) {
         self._isInserted = foo
         self.window = window
         self.menu = menu
@@ -70,7 +72,8 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
             statusItem.button?.title = title
         }
 
-        self.alignRight = alignRight
+        self.alignment = alignment
+        self.screenClippingBehaviour = screenClippingBehaviour
         
         super.init()
 
@@ -193,20 +196,32 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
             return
         }
 
-        var newFrame = CGRect(origin: statusItemWindow.frame.origin, size: window.frame.size)
+        let statusItemFrame = statusItemWindow.frame
+        var newFrame = CGRect(origin: statusItemFrame.origin, size: window.frame.size)
 
         newFrame.origin.y -= newFrame.height
 
-        // Note: Offset by window border size to align with highlighted button.
+        switch alignment {
+        case .left:
+            // Note: Offset by window border size to align with highlighted button.
+            newFrame.origin.x -= Metrics.windowBorderSize
+        case .centre:
+            newFrame.origin.x += (statusItemFrame.width / 2) - (newFrame.width / 2)
+        case .right:
+            // Note: Offset by window border size to align with highlighted button.
+            newFrame.origin.x += statusItemFrame.width - newFrame.width + Metrics.windowBorderSize
+        }
+
         if let screen = statusItemWindow.screen,
            newFrame.maxX > screen.visibleFrame.width {
-            if alignRight {
+            switch (alignment, screenClippingBehaviour) {
+            case (.centre, _):
+                fallthrough
+            case (_, .hugEdge):
                 newFrame.origin.x = screen.visibleFrame.maxX - newFrame.width - Metrics.windowBorderSize
-            } else {
-                newFrame.origin.x += statusItemWindow.frame.width - newFrame.width + Metrics.windowBorderSize
+            case (_, .reverseAlignment):
+                newFrame.origin.x = statusItemFrame.maxX - newFrame.width + Metrics.windowBorderSize
             }
-        } else {
-            newFrame.origin.x -= Metrics.windowBorderSize
         }
 
         guard newFrame != window.frame else {

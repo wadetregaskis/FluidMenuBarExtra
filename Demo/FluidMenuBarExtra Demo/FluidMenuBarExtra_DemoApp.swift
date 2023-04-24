@@ -14,7 +14,8 @@ private struct FluidMenuBarExtra_DemoApp: App {
     @AppStorage("showMenuBarExtra") var showMenuBarExtra = true
     @State var extraButtons = [0, 1]
     @State var animation = NSWindow.AnimationBehavior.none
-    @State var alignRight = false
+    @State var alignment = PopUpAlignment.left
+    @State var screenClippingBehaviour = ScreenClippingBehaviour.reverseAlignment
     @State var useContextualMenu = true
 
     var menu = NSMenu(title: "Moar pop-ups!")
@@ -35,7 +36,8 @@ private struct FluidMenuBarExtra_DemoApp: App {
                          useContextualMenu: $useContextualMenu,
                          extraButtons: $extraButtons,
                          animation: $animation,
-                         alignRight: $alignRight)
+                         alignment: $alignment,
+                         screenClippingBehaviour: $screenClippingBehaviour)
             }.fixedSize()
         }.windowResizability(.contentSize)
 
@@ -44,13 +46,15 @@ private struct FluidMenuBarExtra_DemoApp: App {
                           isInserted: $showMenuBarExtra,
                           animation: animation,
                           menu: (useContextualMenu ? menu : nil),
-                          alignRight: alignRight) {
+                          alignment: alignment,
+                          screenClippingBehaviour: screenClippingBehaviour) {
             /// IMPORTANT:  If you have dynamic content (as this example does, with bindings to state variables) you must define your view in a separate struct, not inline right here.  Otherwise any updates to your state variables won't be reflected in your views.  This appears to be a SwiftUI bug (or bizarre limitation).
             DemoView(showMenuBarExtra: $showMenuBarExtra,
                      useContextualMenu: $useContextualMenu,
                      extraButtons: $extraButtons,
                      animation: $animation,
-                     alignRight: $alignRight)
+                     alignment: $alignment,
+                     screenClippingBehaviour: $screenClippingBehaviour)
         }
     }
 }
@@ -60,7 +64,8 @@ fileprivate struct DemoView: View {
     @Binding var useContextualMenu: Bool
     @Binding var extraButtons: [Int]
     @Binding var animation: NSWindow.AnimationBehavior
-    @Binding var alignRight: Bool
+    @Binding var alignment: PopUpAlignment
+    @Binding var screenClippingBehaviour: ScreenClippingBehaviour
 
     var body: some View {
         VStack {
@@ -70,7 +75,16 @@ fileprivate struct DemoView: View {
 
             Toggle("Show menubar extra", isOn: $showMenuBarExtra)
             Toggle("Use contextual menu", isOn: $useContextualMenu)
-            Toggle("Align right", isOn: $alignRight)
+
+            Picker("Alignment", selection: $alignment) {
+                Text("Left").tag(PopUpAlignment.left)
+                Text("Centre").tag(PopUpAlignment.centre)
+                Text("Right").tag(PopUpAlignment.right)
+            }
+            Picker("Screen clipping behaviour", selection: $screenClippingBehaviour) {
+                Text("Reverse alignment").tag(ScreenClippingBehaviour.reverseAlignment)
+                Text("Hug edge").tag(ScreenClippingBehaviour.hugEdge)
+            }
 
             Picker("Animation", selection: $animation) {
                 Text("None").tag(NSWindow.AnimationBehavior.none)

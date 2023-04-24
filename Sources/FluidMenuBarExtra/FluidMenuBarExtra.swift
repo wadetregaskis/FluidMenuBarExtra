@@ -44,7 +44,8 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     private let image: FluidMenuBarExtraStatusItem.Image
     private let animation: NSWindow.AnimationBehavior
     private let menu: NSMenu?
-    private let alignRight: Bool
+    private let alignment: PopUpAlignment
+    private let screenClippingBehaviour: ScreenClippingBehaviour
     private let content: () -> Content
 
     /// - Parameters:
@@ -61,14 +62,16 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     ///       * `none` / `utilityWindow`:  No animation; the window appears instantly.
     ///       * `default`:  At time of writing this is the same as `none`, but it should never be used as its meaning is implementation-dependent and may change without warning in future versions of FluidMenuBarExtra.
     ///   - menu: An optional menu to be shown if the user right-clicks the menubar item.  This is distinct from the pop-up window shown for left-clicks.  It is uncommon to use this functionality.
-    ///   - alignRight: Applies only when the natural location of the pop-up window isn't viable because it would push the window past the rightmost edge of the screen.  The default behaviour (when this parameter is false) is to flip the pop-up window alignment from left edge to right edge (as is the standard behaviour for menus).  If this parameter is true, the window is instead shown as far right as possible (i.e. up against the rightmost edge of the screen).
+    ///   - alignment: Specifies how the pop-up window is aligned relative to the menubar item.
+    ///   - screenClippingBehaviour: Specifies how the pop-up window's position is adjusted when it runs up against the edges of the screen.
     ///   - content: The contents of the pop-up window that is shown when the user clicks on the menubar item.
     private init(_ title: String,
                  image: FluidMenuBarExtraStatusItem.Image,
                  isInserted foo: Binding<Bool> = .constant(true),
                  animation: NSWindow.AnimationBehavior = .none,
                  menu: NSMenu? = nil,
-                 alignRight: Bool = false,
+                 alignment: PopUpAlignment = .left,
+                 screenClippingBehaviour: ScreenClippingBehaviour = .reverseAlignment,
                  @ViewBuilder content: @escaping () -> Content) {
         self._isInserted = foo
 
@@ -76,7 +79,8 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
         self.image = image
         self.animation = animation
         self.menu = menu
-        self.alignRight = alignRight
+        self.alignment = alignment
+        self.screenClippingBehaviour = screenClippingBehaviour
         self.content = content
 
         if .default == animation {
@@ -97,20 +101,23 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     ///       * `none` / `utilityWindow`:  No animation; the window appears instantly.
     ///       * `default`:  At time of writing this is the same as `none`, but it should never be used as its meaning is implementation-dependent and may change without warning in future versions of FluidMenuBarExtra.
     ///   - menu: An optional menu to be shown if the user right-clicks the menubar item.  This is distinct from the pop-up window shown for left-clicks.  It is uncommon to use this functionality.
-    ///   - alignRight: Applies only when the natural location of the pop-up window isn't viable because it would push the window past the rightmost edge of the screen.  The default behaviour (when this parameter is false) is to flip the pop-up window alignment from left edge to right edge (as is the standard behaviour for menus).  If this parameter is true, the window is instead shown as far right as possible (i.e. up against the rightmost edge of the screen).
+    ///   - alignment: Specifies how the pop-up window is aligned relative to the menubar item.
+    ///   - screenClippingBehaviour: Specifies how the pop-up window's position is adjusted when it runs up against the edges of the screen.
     ///   - content: The contents of the pop-up window that is shown when the user clicks on the menubar item.
     public init(_ title: String,
                 isInserted: Binding<Bool> = .constant(true),
                 animation: NSWindow.AnimationBehavior = .none,
                 menu: NSMenu? = nil,
-                alignRight: Bool = false,
+                alignment: PopUpAlignment = .left,
+                screenClippingBehaviour: ScreenClippingBehaviour = .reverseAlignment,
                 @ViewBuilder content: @escaping () -> Content) {
         self.init(title,
                   image: .none,
                   isInserted: isInserted,
                   animation: animation,
                   menu: menu,
-                  alignRight: alignRight,
+                  alignment: alignment,
+                  screenClippingBehaviour: screenClippingBehaviour,
                   content: content)
     }
 
@@ -128,21 +135,24 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     ///       * `none` / `utilityWindow`:  No animation; the window appears instantly.
     ///       * `default`:  At time of writing this is the same as `none`, but it should never be used as its meaning is implementation-dependent and may change without warning in future versions of FluidMenuBarExtra.
     ///   - menu: An optional menu to be shown if the user right-clicks the menubar item.  This is distinct from the pop-up window shown for left-clicks.  It is uncommon to use this functionality.
-    ///   - alignRight: Applies only when the natural location of the pop-up window isn't viable because it would push the window past the rightmost edge of the screen.  The default behaviour (when this parameter is false) is to flip the pop-up window alignment from left edge to right edge (as is the standard behaviour for menus).  If this parameter is true, the window is instead shown as far right as possible (i.e. up against the rightmost edge of the screen).
+    ///   - alignment: Specifies how the pop-up window is aligned relative to the menubar item.
+    ///   - screenClippingBehaviour: Specifies how the pop-up window's position is adjusted when it runs up against the edges of the screen.
     ///   - content: The contents of the pop-up window that is shown when the user clicks on the menubar item.
     public init(_ title: String,
                 image: String,
                 isInserted: Binding<Bool> = .constant(true),
                 animation: NSWindow.AnimationBehavior = .none,
                 menu: NSMenu? = nil,
-                alignRight: Bool = false,
+                alignment: PopUpAlignment = .left,
+                screenClippingBehaviour: ScreenClippingBehaviour = .reverseAlignment,
                 @ViewBuilder content: @escaping () -> Content) {
         self.init(title,
                   image: .named(image),
                   isInserted: isInserted,
                   animation: animation,
                   menu: menu,
-                  alignRight: alignRight,
+                  alignment: alignment,
+                  screenClippingBehaviour: screenClippingBehaviour,
                   content: content)
     }
 
@@ -160,21 +170,24 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     ///       * `none` / `utilityWindow`:  No animation; the window appears instantly.
     ///       * `default`:  At time of writing this is the same as `none`, but it should never be used as its meaning is implementation-dependent and may change without warning in future versions of FluidMenuBarExtra.
     ///   - menu: An optional menu to be shown if the user right-clicks the menubar item.  This is distinct from the pop-up window shown for left-clicks.  It is uncommon to use this functionality.
-    ///   - alignRight: Applies only when the natural location of the pop-up window isn't viable because it would push the window past the rightmost edge of the screen.  The default behaviour (when this parameter is false) is to flip the pop-up window alignment from left edge to right edge (as is the standard behaviour for menus).  If this parameter is true, the window is instead shown as far right as possible (i.e. up against the rightmost edge of the screen).
+    ///   - alignment: Specifies how the pop-up window is aligned relative to the menubar item.
+    ///   - screenClippingBehaviour: Specifies how the pop-up window's position is adjusted when it runs up against the edges of the screen.
     ///   - content: The contents of the pop-up window that is shown when the user clicks on the menubar item.
     public init(_ title: String,
                 image: NSImage,
                 isInserted: Binding<Bool> = .constant(true),
                 animation: NSWindow.AnimationBehavior = .none,
                 menu: NSMenu? = nil,
-                alignRight: Bool = false,
+                alignment: PopUpAlignment = .left,
+                screenClippingBehaviour: ScreenClippingBehaviour = .reverseAlignment,
                 @ViewBuilder content: @escaping () -> Content) {
         self.init(title,
                   image: .direct(image),
                   isInserted: isInserted,
                   animation: animation,
                   menu: menu,
-                  alignRight: alignRight,
+                  alignment: alignment,
+                  screenClippingBehaviour: screenClippingBehaviour,
                   content: content)
     }
 
@@ -192,21 +205,24 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     ///       * `none` / `utilityWindow`:  No animation; the window appears instantly.
     ///       * `default`:  At time of writing this is the same as `none`, but it should never be used as its meaning is implementation-dependent and may change without warning in future versions of FluidMenuBarExtra.
     ///   - menu: An optional menu to be shown if the user right-clicks the menubar item.  This is distinct from the pop-up window shown for left-clicks.  It is uncommon to use this functionality.
-    ///   - alignRight: Applies only when the natural location of the pop-up window isn't viable because it would push the window past the rightmost edge of the screen.  The default behaviour (when this parameter is false) is to flip the pop-up window alignment from left edge to right edge (as is the standard behaviour for menus).  If this parameter is true, the window is instead shown as far right as possible (i.e. up against the rightmost edge of the screen).
+    ///   - alignment: Specifies how the pop-up window is aligned relative to the menubar item.
+    ///   - screenClippingBehaviour: Specifies how the pop-up window's position is adjusted when it runs up against the edges of the screen.
     ///   - content: The contents of the pop-up window that is shown when the user clicks on the menubar item.
     public init(_ title: String,
                 systemImage: String,
                 isInserted: Binding<Bool> = .constant(true),
                 animation: NSWindow.AnimationBehavior = .none,
                 menu: NSMenu? = nil,
-                alignRight: Bool = false,
+                alignment: PopUpAlignment = .left,
+                screenClippingBehaviour: ScreenClippingBehaviour = .reverseAlignment,
                 @ViewBuilder content: @escaping () -> Content) {
         self.init(title,
                   image: .systemNamed(systemImage),
                   isInserted: isInserted,
                   animation: animation,
                   menu: menu,
-                  alignRight: alignRight,
+                  alignment: alignment,
+                  screenClippingBehaviour: screenClippingBehaviour,
                   content: content)
     }
     
@@ -221,7 +237,8 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
     public var body: some Scene {
         if let statusItem = state.statusItem {
             statusItem.menu = menu
-            statusItem.alignRight = alignRight
+            statusItem.alignment = alignment
+            statusItem.screenClippingBehaviour = screenClippingBehaviour
             statusItem.window.animationBehavior = animation
         } else {
             state.statusItem = FluidMenuBarExtraStatusItem(title: title,
@@ -231,9 +248,31 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
                                                                                            animation: animation,
                                                                                            content: content),
                                                            menu: menu,
-                                                           alignRight: alignRight)
+                                                           alignment: alignment,
+                                                           screenClippingBehaviour: screenClippingBehaviour)
         }
 
         return Settings {}.onChange(of: isInserted) { state.statusItem?.isVisible = $0 }
     }
+}
+
+/// Controls how the pop-up window is aligned relative to the menubar item.
+public enum PopUpAlignment: Hashable {
+    /// The pop-up window's left edge is aligned with the menubar item's left edge.
+    case left
+
+    /// The pop-up window is centred underneath the menubar item.
+    case centre
+
+    /// The pop-up window's right edge is aligned with the menubar item's right edge.
+    case right
+}
+
+/// Controls how the pop-up window's position is adapted to space constraints from encountering the left or right edges of the screen.
+public enum ScreenClippingBehaviour: Hashable {
+    /// If there isn't enough space to use the normal alignment, switch to its reverse (e.g. ``FluidMenuBarExtraPopUpAlignment/right`` instead of ``FluidMenuBarExtraPopUpAlignment/left``).  If this still isn't sufficient to resolve the problem, the behaviour falls back to ``hugEdge``.
+    case reverseAlignment
+
+    /// Nudge the pop-up window in from the edge just enough to make it fully visible.  This may mean an otherwise unnatural alignment of the pop-up window and the menubar item, not corresponding to any of the ``FluidMenuBarExtraPopUpAlignment`` options.
+    case hugEdge
 }
