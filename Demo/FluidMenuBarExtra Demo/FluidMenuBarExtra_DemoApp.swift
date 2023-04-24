@@ -53,8 +53,6 @@ fileprivate struct DemoMenuItemView: View {
                 extraButtons.append(extraButtons.count)
             }
 
-            let _ = print("extraButtons = \(extraButtons)")
-
             ForEach($extraButtons, id: \.self) { $button in
                 Button("No more buttons!") {
                     extraButtons.removeLast()
