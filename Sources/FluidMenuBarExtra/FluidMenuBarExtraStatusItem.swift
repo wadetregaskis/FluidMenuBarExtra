@@ -29,6 +29,7 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem.isVisible = true
+        statusItem.behavior = .removalAllowed
         statusItem.button?.setAccessibilityTitle(title)
 
         if let image {
@@ -45,14 +46,18 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
             if let button = self?.statusItem.button,
                event.window == button.window
             {
-                if (event.type == NSEvent.EventType.leftMouseDown) && !event.modifierFlags.contains(.command) {
-                    self?.didPressStatusBarButton(button)
-                } else {
+                switch event.type {
+                case .leftMouseDown:
+                    if !event.modifierFlags.contains(.command) {
+                        self?.didPressStatusBarButton(button)
+                        return nil
+                    }
+                case .rightMouseDown:
                     menu?.popUp(positioning: nil, at: CGPoint(x: 0, y: button.bounds.maxY + 5), in: button)
+                    return nil
+                default:
+                    break
                 }
-
-                // Stop propagating the event so that the button remains highlighted.
-                return nil
             }
 
             return event
