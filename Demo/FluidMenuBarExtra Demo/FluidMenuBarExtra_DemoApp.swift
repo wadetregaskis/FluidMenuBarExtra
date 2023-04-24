@@ -15,6 +15,8 @@ private struct FluidMenuBarExtra_DemoApp: App {
     @State var extraButtons = [0, 1]
     @State var animation = NSWindow.AnimationBehavior.none
     @State var alignRight = false
+    @State var useContextualMenu = true
+
     var menu = NSMenu(title: "Moar pop-ups!")
     var liveMenuItem = NSMenuItem()
 
@@ -30,6 +32,7 @@ private struct FluidMenuBarExtra_DemoApp: App {
         Settings() {
             Form {
                 DemoView(showMenuBarExtra: $showMenuBarExtra,
+                         useContextualMenu: $useContextualMenu,
                          extraButtons: $extraButtons,
                          animation: $animation,
                          alignRight: $alignRight)
@@ -40,10 +43,11 @@ private struct FluidMenuBarExtra_DemoApp: App {
                           systemImage: "chevron.down.circle",
                           isInserted: $showMenuBarExtra,
                           animation: animation,
-                          menu: menu,
+                          menu: (useContextualMenu ? menu : nil),
                           alignRight: alignRight) {
             /// IMPORTANT:  If you have dynamic content (as this example does, with bindings to state variables) you must define your view in a separate struct, not inline right here.  Otherwise any updates to your state variables won't be reflected in your views.  This appears to be a SwiftUI bug (or bizarre limitation).
             DemoView(showMenuBarExtra: $showMenuBarExtra,
+                     useContextualMenu: $useContextualMenu,
                      extraButtons: $extraButtons,
                      animation: $animation,
                      alignRight: $alignRight)
@@ -53,6 +57,7 @@ private struct FluidMenuBarExtra_DemoApp: App {
 
 fileprivate struct DemoView: View {
     @Binding var showMenuBarExtra: Bool
+    @Binding var useContextualMenu: Bool
     @Binding var extraButtons: [Int]
     @Binding var animation: NSWindow.AnimationBehavior
     @Binding var alignRight: Bool
@@ -64,6 +69,7 @@ fileprivate struct DemoView: View {
             Divider()
 
             Toggle("Show menubar extra", isOn: $showMenuBarExtra)
+            Toggle("Use contextual menu", isOn: $useContextualMenu)
             Toggle("Align right", isOn: $alignRight)
 
             Picker("Animation", selection: $animation) {

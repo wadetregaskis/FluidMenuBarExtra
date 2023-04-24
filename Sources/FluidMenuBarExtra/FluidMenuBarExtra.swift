@@ -220,6 +220,7 @@ public struct FluidMenuBarExtra<Content: View>: Scene {
 
     public var body: some Scene {
         if let statusItem = state.statusItem {
+            statusItem.menu = menu
             statusItem.alignRight = alignRight
             statusItem.window.animationBehavior = animation
         } else {

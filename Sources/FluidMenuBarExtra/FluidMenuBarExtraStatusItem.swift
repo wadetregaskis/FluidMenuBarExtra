@@ -13,6 +13,7 @@ import SwiftUI
 /// when triggered.
 final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
     let window: NSWindow
+    var menu: NSMenu?
     @objc private let statusItem: NSStatusItem
     private var statusItemVisibilityObservation: NSKeyValueObservation? = nil
 
@@ -56,6 +57,7 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
          alignRight: Bool = false) {
         self._isInserted = foo
         self.window = window
+        self.menu = menu
 
         statusItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
         statusItem.behavior = .removalAllowed
@@ -89,7 +91,7 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
                         return nil
                     }
                 case .rightMouseDown:
-                    menu?.popUp(positioning: nil, at: CGPoint(x: 0, y: button.bounds.maxY + 5), in: button)
+                    self?.menu?.popUp(positioning: nil, at: CGPoint(x: 0, y: button.bounds.maxY + 5), in: button)
                     return nil
                 default:
                     break
