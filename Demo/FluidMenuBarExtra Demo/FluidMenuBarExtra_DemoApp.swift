@@ -15,8 +15,18 @@ private struct FluidMenuBarExtra_DemoApp: App {
     @State var extraButtons = [0, 1]
     @State var animation = NSWindow.AnimationBehavior.none
     @State var alignRight = false
+    var menu = NSMenu(title: "Moar pop-ups!")
+    var liveMenuItem = NSMenuItem()
+
+    init() {
+        menu.addItem(withTitle: "Easter egg!", action: nil, keyEquivalent: "")
+        menu.addItem(NSMenuItem.separator())
+        menu.addItem(liveMenuItem)
+    }
 
     var body: some Scene {
+        let _ = liveMenuItem.title = "There \(1 != extraButtons.count ? "are" : "is") \(extraButtons.count) extra button\(1 != extraButtons.count ? "s" : "")"
+
         Settings() {
             Form {
                 DemoView(showMenuBarExtra: $showMenuBarExtra,
@@ -30,6 +40,7 @@ private struct FluidMenuBarExtra_DemoApp: App {
                           systemImage: "chevron.down.circle",
                           isInserted: $showMenuBarExtra,
                           animation: animation,
+                          menu: menu,
                           alignRight: alignRight) {
             /// IMPORTANT:  If you have dynamic content (as this example does, with bindings to state variables) you must define your view in a separate struct, not inline right here.  Otherwise any updates to your state variables won't be reflected in your views.  This appears to be a SwiftUI bug (or bizarre limitation).
             DemoView(showMenuBarExtra: $showMenuBarExtra,
