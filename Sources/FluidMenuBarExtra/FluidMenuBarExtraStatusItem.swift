@@ -23,7 +23,7 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
     var alignment: PopUpAlignment
     var screenClippingBehaviour: ScreenClippingBehaviour {
         didSet {
-            setWindowPosition(animate: true)
+            setWindowFrame(animate: true)
         }
     }
 
@@ -50,13 +50,13 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
         }
     }
 
-    init(title: String,
-         image: Image = .none,
-         isInserted foo: Binding<Bool> = .constant(true),
-         window: NSWindow,
-         menu: NSMenu? = nil,
-         alignment: PopUpAlignment = .left,
-         screenClippingBehaviour: ScreenClippingBehaviour = .reverseAlignment) {
+    init<Content: View>(title: String,
+                        image: Image = .none,
+                        isInserted foo: Binding<Bool> = .constant(true),
+                        window: FluidMenuBarExtraWindow<Content>,
+                        menu: NSMenu? = nil,
+                        alignment: PopUpAlignment = .left,
+                        screenClippingBehaviour: ScreenClippingBehaviour = .reverseAlignment) {
         self._isInserted = foo
         self.window = window
         self.menu = menu
@@ -76,6 +76,9 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
         self.screenClippingBehaviour = screenClippingBehaviour
         
         super.init()
+
+        assert(nil == window.statusItem)
+        window.statusItem = self
 
         statusItemVisibilityObservation = observe(\.statusItem.isVisible, options: .new) {
             [weak self] _, change in
@@ -134,7 +137,7 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
             return
         }
 
-        setWindowPosition()
+        setWindowFrame()
 
         // Tells the system to persist the menu bar in full screen mode.
         DistributedNotificationCenter.default().post(name: .beginMenuTracking, object: nil)
@@ -189,15 +192,20 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
         statusItem.button?.highlight(highlight)
     }
 
-    private func setWindowPosition(animate: Bool = false) {
+    func setWindowFrame(size: CGSize? = nil,
+                        animate: Bool = false) {
         guard let statusItemWindow = statusItem.button?.window else {
             // If we don't know where the status item is, just place the window in the center.
+            if let size {
+                window.setFrame(NSRect(origin: window.frame.origin, size: size), display: true, animate: false)
+            }
+
             window.center()
             return
         }
 
         let statusItemFrame = statusItemWindow.frame
-        var newFrame = CGRect(origin: statusItemFrame.origin, size: window.frame.size)
+        var newFrame = CGRect(origin: statusItemFrame.origin, size: size ?? window.frame.size)
 
         newFrame.origin.y -= newFrame.height
 
@@ -212,15 +220,27 @@ final class FluidMenuBarExtraStatusItem: NSObject, NSWindowDelegate {
             newFrame.origin.x += statusItemFrame.width - newFrame.width + Metrics.windowBorderSize
         }
 
-        if let screen = statusItemWindow.screen,
-           newFrame.maxX > screen.visibleFrame.width {
-            switch (alignment, screenClippingBehaviour) {
-            case (.centre, _):
-                fallthrough
-            case (_, .hugEdge):
-                newFrame.origin.x = screen.visibleFrame.maxX - newFrame.width - Metrics.windowBorderSize
-            case (_, .reverseAlignment):
-                newFrame.origin.x = statusItemFrame.maxX - newFrame.width + Metrics.windowBorderSize
+        if let screen = statusItemWindow.screen {
+            if newFrame.maxX > screen.visibleFrame.maxX {
+                switch (alignment, screenClippingBehaviour) {
+                case (.left, .reverseAlignment):
+                    newFrame.origin.x = statusItemFrame.maxX - newFrame.width + Metrics.windowBorderSize
+                default:
+                    newFrame.origin.x = screen.visibleFrame.maxX - newFrame.width - Metrics.windowBorderSize
+                }
+            }
+
+            if newFrame.minX < screen.visibleFrame.minX {
+                switch (alignment, screenClippingBehaviour) {
+                case (.right, .reverseAlignment):
+                    newFrame.origin.x = statusItemFrame.minX - Metrics.windowBorderSize
+
+                    if newFrame.maxX > screen.visibleFrame.maxX {
+                        fallthrough
+                    }
+                default:
+                    newFrame.origin.x = screen.visibleFrame.minX + Metrics.windowBorderSize
+                }
             }
         }
 

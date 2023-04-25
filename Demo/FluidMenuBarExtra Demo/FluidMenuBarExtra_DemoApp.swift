@@ -17,6 +17,7 @@ private struct FluidMenuBarExtra_DemoApp: App {
     @State var alignment = PopUpAlignment.left
     @State var screenClippingBehaviour = ScreenClippingBehaviour.reverseAlignment
     @State var useContextualMenu = true
+    @State var boxWidth: CGFloat = 50
 
     var menu = NSMenu(title: "Moar pop-ups!")
     var liveMenuItem = NSMenuItem()
@@ -31,14 +32,13 @@ private struct FluidMenuBarExtra_DemoApp: App {
         let _ = liveMenuItem.title = "There \(1 != extraButtons.count ? "are" : "is") \(extraButtons.count) extra button\(1 != extraButtons.count ? "s" : "")"
 
         Settings() {
-            Form {
-                DemoView(showMenuBarExtra: $showMenuBarExtra,
-                         useContextualMenu: $useContextualMenu,
-                         extraButtons: $extraButtons,
-                         animation: $animation,
-                         alignment: $alignment,
-                         screenClippingBehaviour: $screenClippingBehaviour)
-            }.fixedSize()
+            DemoView(showMenuBarExtra: $showMenuBarExtra,
+                     useContextualMenu: $useContextualMenu,
+                     extraButtons: $extraButtons,
+                     animation: $animation,
+                     alignment: $alignment,
+                     screenClippingBehaviour: $screenClippingBehaviour,
+                     boxWidth: $boxWidth).fixedSize()
         }.windowResizability(.contentSize)
 
         FluidMenuBarExtra("Demo",
@@ -54,7 +54,8 @@ private struct FluidMenuBarExtra_DemoApp: App {
                      extraButtons: $extraButtons,
                      animation: $animation,
                      alignment: $alignment,
-                     screenClippingBehaviour: $screenClippingBehaviour)
+                     screenClippingBehaviour: $screenClippingBehaviour,
+                     boxWidth: $boxWidth)
         }
     }
 }
@@ -66,6 +67,7 @@ fileprivate struct DemoView: View {
     @Binding var animation: NSWindow.AnimationBehavior
     @Binding var alignment: PopUpAlignment
     @Binding var screenClippingBehaviour: ScreenClippingBehaviour
+    @Binding var boxWidth: CGFloat
 
     var body: some View {
         VStack {
@@ -76,21 +78,43 @@ fileprivate struct DemoView: View {
             Toggle("Show menubar extra", isOn: $showMenuBarExtra)
             Toggle("Use contextual menu", isOn: $useContextualMenu)
 
-            Picker("Alignment", selection: $alignment) {
-                Text("Left").tag(PopUpAlignment.left)
-                Text("Centre").tag(PopUpAlignment.centre)
-                Text("Right").tag(PopUpAlignment.right)
-            }
-            Picker("Screen clipping behaviour", selection: $screenClippingBehaviour) {
-                Text("Reverse alignment").tag(ScreenClippingBehaviour.reverseAlignment)
-                Text("Hug edge").tag(ScreenClippingBehaviour.hugEdge)
+            Form {
+                Picker("Alignment:", selection: $alignment) {
+                    Text("Left").tag(PopUpAlignment.left)
+                    Text("Centre").tag(PopUpAlignment.centre)
+                    Text("Right").tag(PopUpAlignment.right)
+                }
+
+                Picker("Screen clipping behaviour:", selection: $screenClippingBehaviour) {
+                    Text("Reverse alignment").tag(ScreenClippingBehaviour.reverseAlignment)
+                    Text("Hug edge").tag(ScreenClippingBehaviour.hugEdge)
+                }
+
+                Picker("Animation:", selection: $animation) {
+                    Text("None").tag(NSWindow.AnimationBehavior.none)
+                    Text("Alert panel").tag(NSWindow.AnimationBehavior.alertPanel)
+                    Text("Document window").tag(NSWindow.AnimationBehavior.documentWindow)
+                    Text("Utility window").tag(NSWindow.AnimationBehavior.utilityWindow)
+                }
             }
 
-            Picker("Animation", selection: $animation) {
-                Text("None").tag(NSWindow.AnimationBehavior.none)
-                Text("Alert panel").tag(NSWindow.AnimationBehavior.alertPanel)
-                Text("Document window").tag(NSWindow.AnimationBehavior.documentWindow)
-                Text("Utility window").tag(NSWindow.AnimationBehavior.utilityWindow)
+            Divider()
+        }.padding([.leading, .top, .trailing], 10)
+            .pickerStyle(.radioGroup)
+
+        VStack {
+            Rectangle()
+                .frame(width: boxWidth, height: 20, alignment: .center)
+                .foregroundColor(.accentColor)
+
+            HStack {
+                Button("Less shape!") {
+                    boxWidth = max(50, boxWidth - 200)
+                }.disabled(boxWidth <= 50)
+
+                Button("Moar shape!") {
+                    boxWidth += 200
+                }.disabled(boxWidth > (NSScreen.main?.frame.width ?? CGFloat.greatestFiniteMagnitude))
             }
 
             Divider()
@@ -104,6 +128,6 @@ fileprivate struct DemoView: View {
                     extraButtons.removeLast()
                 }
             }
-        }.padding(10)
+        }.padding([.leading, .bottom, .trailing], 10)
     }
 }
