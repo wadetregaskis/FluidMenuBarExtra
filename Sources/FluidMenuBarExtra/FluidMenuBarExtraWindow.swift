@@ -43,7 +43,9 @@ final class FluidMenuBarExtraWindow<Content: View>: NSPanel {
         return view
     }()
 
-    init(title: String, animation: NSWindow.AnimationBehavior = .none, content: @escaping () -> Content) {
+    init(title: String,
+         animation: NSWindow.AnimationBehavior = .none,
+         content: @escaping () -> Content) {
         self.content = content
 
         super.init(
