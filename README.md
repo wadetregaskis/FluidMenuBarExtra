@@ -8,10 +8,7 @@
 <h4 align="center">A lightweight tool for building great menu bar extras with SwiftUI.</h4>
 
 <p align="center">
-  <a href="https://github.com/wadetregaskis/FluidMenuBarExtra/issues"><img alt="GitHub issues" src="https://img.shields.io/github/issues/wadetregaskis/FluidMenuBarExtra"></a>
   <img alt="GitHub contributors" src="https://img.shields.io/github/contributors/wadetregaskis/FluidMenuBarExtra">
-  <a href="https://github.com/wadetregaskis/FluidMenuBarExtra/stargazers"><img alt="GitHub stars" src="https://img.shields.io/github/stars/wadetregaskis/FluidMenuBarExtra"></a>
-  <a href="https://github.com/wadetregaskis/FluidMenuBarExtra"><img alt="GitHub license" src="https://img.shields.io/github/license/wadetregaskis/FluidMenuBarExtra"></a>
   <a href="https://swiftpackageindex.com/wadetregaskis/FluidMenuBarExtra"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fwadetregaskis%2FFluidMenuBarExtra%2Fbadge%3Ftype%3Dplatforms"></a>
 </p>
 
