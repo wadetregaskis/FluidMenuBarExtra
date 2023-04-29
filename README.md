@@ -21,7 +21,7 @@
 
 ## About
 
-SwiftUI's built in [`MenuBarExtra`](https://developer.apple.com/documentation/swiftui/menubarextra) API makes it easy to create menu bar applications in pure SwiftUI.  However, as of macOS 13 its functionality is extremely limited.  Worse, it doesn't behave correctly (e.g. it doesn't animate, it doesn't close the pop-up when the user interacts with other menu items, etc).
+SwiftUI's built-in [`MenuBarExtra`](https://developer.apple.com/documentation/swiftui/menubarextra) API makes it easy to create menu bar applications in pure SwiftUI.  However, as of macOS 13 its functionality is extremely limited.  Worse, it doesn't behave correctly (e.g. it doesn't animate, it doesn't close the pop-up when the user interacts with other menu items, etc).
 
 FluidMenuBarExtra provides a drop-in replacement to correct these issues.
 
