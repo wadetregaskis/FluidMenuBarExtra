@@ -11,7 +11,7 @@
   <a href=""><img alt="GitHub code size in bytes" src="https://img.shields.io/github/languages/code-size/wadetregaskis/FluidMenuBarExtra.svg"></a>
   <a href="https://github.com/wadetregaskis/FluidMenuBarExtra/graphs/contributors"><img alt="GitHub contributors" src="https://img.shields.io/github/contributors/wadetregaskis/FluidMenuBarExtra"></a>
   <a href="https://swiftpackageindex.com/wadetregaskis/FluidMenuBarExtra"><img src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fwadetregaskis%2FFluidMenuBarExtra%2Fbadge%3Ftype%3Dplatforms"></a>
-  <a href="https://swiftpackageindex.com/wadetregaskis/FluidMenuBarExtra"><img alt="Swift version compatibility" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fwadetregaskis%2FFoundationExtensions%2Fbadge%3Ftype%3Dswift-versions"></a>
+  <a href="https://swiftpackageindex.com/wadetregaskis/FluidMenuBarExtra"><img alt="Swift version compatibility" src="https://img.shields.io/endpoint?url=https%3A%2F%2Fswiftpackageindex.com%2Fapi%2Fpackages%2Fwadetregaskis%2FFluidMenuBarExtra%2Fbadge%3Ftype%3Dswift-versions"></a>
   <a href="https://github.com/wadetregaskis/FluidMenuBarExtra/actions/workflows/swift.yml"><img src="https://github.com/wadetregaskis/FluidMenuBarExtra/actions/workflows/swift.yml/badge.svg"></a>
 </p>
 
